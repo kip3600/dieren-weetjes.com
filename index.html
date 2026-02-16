@@ -1,295 +1,472 @@
-<!DOCTYPE html>
+from html import unescape
+
+raw = '''<!DOCTYPE html>
 <html lang="nl">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dieren Encyclopedie – Soorten, Foto’s, Weetjes & Leefgebied</title>
-  <meta name="description" content="Ontdek dieren per categorie met foto’s, weetjes, leefgebied, dieet en beschermingsstatus. Zoek en filter door de collectie." />
+  <title>Vissen Wereld – Ontdek, Leer & Bewonder</title>
+  <meta name="description" content="Informatie over zoetwater- en zoutwatervissen, tips voor aquaria, en een prachtige galerij." />
+
+  <!-- Basisstijl -->
   <style>
     :root{
-      --bg:#f7fbff; --text:#0f172a; --muted:#5b6470;
-      --primary:#0d47a1; --primary-700:#0a3a84; --accent:#00bcd4;
-      --card:#fff; --border:#e6eef7; --ring:#80d8ff; --radius:16px;
-      --chip:#f0f9ff; --chip-text:#0b5ea8;
+      --primary: #0d47a1;      /* diepblauw */
+      --primary-700:#0a3a84;
+      --accent:  #00bcd4;      /* aqua */
+      --bg:      #f7fbff;      /* zacht */
+      --text:    #1b1f23;      /* donkergrijs */
+      --card:    #ffffff;      /* kaartkleur */
+      --muted:   #6b7280;      /* subtiele tekst */
+      --ring:    #80d8ff;      /* focus ring */
+      --radius:  14px;
     }
-    @media (prefers-color-scheme: dark){
-      :root{ --bg:#0b1220; --text:#e5e7eb; --muted:#9aa4b2; --card:#0f172a; --border:#1f2937; --chip:#0b2030; --chip-text:#7cc6ff }
+
+    /* Reset & basis */
+    *{ box-sizing: border-box; }
+    html, body{ height:100%; }
+    body{
+      margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text); background:var(--bg); line-height:1.6;
     }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";background:var(--bg);color:var(--text);line-height:1.6}
-    img{max-width:100%;height:auto;display:block}
-    a{color:var(--primary);text-decoration:none}
-    a:hover{text-decoration:underline}
-    .container{width:min(1200px,92%);margin-inline:auto}
+    img{ max-width:100%; height:auto; display:block; }
+    a{ color:var(--primary); text-decoration: none; }
+    a:hover{ text-decoration: underline; }
+    .container{ width:min(1100px, 92%); margin-inline:auto; }
 
-    header{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.85);backdrop-filter:blur(10px);border-bottom:1px solid #e5e7eb}
-    @media (prefers-color-scheme: dark){ header{ background:rgba(15,23,42,.7); border-color:var(--border) } }
-    .nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 0}
-    .brand{display:flex;align-items:center;gap:10px;font-weight:800}
-    .logo{width:36px;height:36px;border-radius:10px;background:radial-gradient(circle at 30% 30%,var(--accent),var(--primary));box-shadow:0 6px 14px rgba(0,0,0,.12)}
-    nav a{padding:8px 10px;border-radius:10px;color:inherit}
-    nav a:hover{background:#eaf6ff}@media (prefers-color-scheme: dark){ nav a:hover{ background:#0b2030 } }
+    /* Header / Navigatie */
+    header{
+      position:sticky; top:0; z-index:1000;
+      background:rgba(255,255,255,0.9); backdrop-filter: blur(8px);
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .nav{
+      display:flex; align-items:center; justify-content:space-between; gap:16px;
+      padding:12px 0;
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px; font-weight:700; letter-spacing:.3px;
+    }
+    .brand .logo{
+      width:38px; height:38px; border-radius:10px;
+      background: radial-gradient(circle at 30% 30%, var(--accent), var(--primary));
+      box-shadow: 0 6px 14px rgba(0,0,0,.15);
+    }
+    nav ul{ list-style:none; display:flex; gap:14px; padding:0; margin:0; }
+    nav a{
+      display:inline-block; padding:8px 12px; border-radius:10px; font-weight:600;
+    }
+    nav a:hover, nav a:focus{
+      background:#eaf6ff; outline:none;
+    }
 
-    section{padding:38px 0}
-    .section-title{margin:0 0 16px;font-size:clamp(22px,3.3vw,32px);color:var(--primary)}
-    .muted{color:var(--muted)}
+    /* Hero */
+    .hero{
+      position:relative; isolation:isolate;
+      padding: clamp(38px, 6vw, 80px) 0 40px;
+      background:
+        radial-gradient(1200px 400px at 70% -10%, #dff7ff 0%, rgba(223,247,255,0) 60%),
+        linear-gradient(180deg, #eef7ff 0%, rgba(238,247,255,0) 60%);
+      overflow:hidden;
+    }
+    .hero .bubbles{
+      position:absolute; inset:0; z-index:-1; pointer-events:none;
+      background:
+        radial-gradient(12px 12px at 10% 20%, rgba(255,255,255,.65), rgba(255,255,255,0)),
+        radial-gradient(10px 10px at 30% 60%, rgba(255,255,255,.55), rgba(255,255,255,0)),
+        radial-gradient(8px  8px  at 80% 40%, rgba(255,255,255,.45), rgba(255,255,255,0)),
+        radial-gradient(14px 14px at 60% 80%, rgba(255,255,255,.35), rgba(255,255,255,0));
+      opacity:.8;
+    }
+    .hero-content{
+      display:grid; grid-template-columns: 1.2fr 1fr; align-items:center; gap:28px;
+    }
+    .hero h1{
+      margin:0 0 10px; font-size: clamp(26px, 4vw, 44px); line-height:1.15;
+      color:var(--primary);
+    }
+    .hero p{ margin:0 0 18px; color:#334155; }
+    .cta{
+      display:flex; gap:12px; flex-wrap:wrap;
+    }
+    .btn{
+      display:inline-flex; align-items:center; gap:10px;
+      padding:10px 16px; border-radius:12px; border:2px solid transparent;
+      font-weight:700; cursor:pointer; transition:.2s transform, .2s box-shadow, .2s background;
+    }
+    .btn-primary{
+      background: linear-gradient(135deg, var(--primary), var(--primary-700));
+      color:#fff; box-shadow: 0 8px 20px rgba(13,71,161,.25);
+    }
+    .btn-primary:hover{ transform: translateY(-1px); }
+    .btn-ghost{
+      background:#ffffff; border-color:#e5e7eb; color:var(--primary);
+    }
+    .btn-ghost:hover{ background:#f8fbff; }
 
-    .filters{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:10px 0 16px}
-    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 8px 20px rgba(2,12,29,.04);padding:12px}
-    input[type="search"], select{padding:10px 12px;border-radius:10px;border:1px solid #dbe6f3;background:#fff;font:inherit}
-    @media (prefers-color-scheme: dark){ input[type="search"], select{ background:#0b1220; border-color:var(--border); color:var(--text) } }
-    input:focus,select:focus,.btn:focus{outline:none;box-shadow:0 0 0 3px var(--ring)}
-    .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+    /* Secties */
+    section{ padding: 40px 0; }
+    .section-title{
+      font-size: clamp(20px, 3vw, 30px); margin: 0 0 18px; color:var(--primary);
+    }
+    .muted{ color:var(--muted); }
 
-    .grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
-    .animal{overflow:hidden}
-    .animal img{aspect-ratio:16/10;object-fit:cover;border-radius:12px}
-    .animal h3{margin:.5rem 0 .25rem}
-    .latin{font-style:italic}
-    .chips{display:flex;flex-wrap:wrap;gap:6px;margin:.25rem 0 .5rem}
-    .chip{display:inline-flex;align-items:center;gap:7px;padding:6px 10px;border-radius:999px;background:var(--chip);color:var(--chip-text);border:1px solid #d6ecff;font-size:.86rem}
-    .facts{margin:.25rem 0 0 .0rem;padding-left:1.1rem}
-    .facts li{margin:.25rem 0}
+    /* Kaartenraster */
+    .grid{
+      display:grid; gap:18px;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    }
+    .card{
+      background:var(--card); border:1px solid #e6eef7; border-radius: var(--radius);
+      padding:16px; box-shadow: 0 8px 20px rgba(2, 12, 29, 0.04);
+    }
+    .card h3{ margin-top:0; margin-bottom:8px; }
+    .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      font-size: .84rem; padding:6px 10px; border-radius:999px;
+      background:#f0f9ff; color:#0b5ea8; border:1px solid #d6ecff;
+    }
 
-    .gallery{columns:2 260px;column-gap:14px}
-    .gallery figure{break-inside:avoid;margin:0 0 14px;background:var(--card);border-radius:14px;overflow:hidden;border:1px solid var(--border)}
-    .gallery figcaption{padding:8px 12px;color:#334155;font-size:.92rem}
+    /* Galerij */
+    .gallery{
+      columns: 2 260px; column-gap: 14px;
+    }
+    .gallery figure{
+      break-inside: avoid; margin:0 0 14px; background:#fff; border-radius:14px; overflow:hidden;
+      border:1px solid #e6eef7; box-shadow: 0 6px 14px rgba(2,12,29,0.05);
+    }
+    .gallery figcaption{
+      padding:8px 12px; font-size:.9rem; color:#334155;
+    }
 
-    footer{border-top:1px solid #e5e7eb;margin-top:24px;padding:20px 0 36px;color:#475569}
-    @media (prefers-color-scheme: dark){ footer{ border-color:var(--border); color:#9aa4b2 } }
+    /* Tips lijst */
+    .tips li{ margin: 6px 0; }
 
-    .btn{display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;border:2px solid transparent;font-weight:700;cursor:pointer}
-    .btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-700));color:#fff}
+    /* Contact */
+    form{
+      display:grid; gap:12px; max-width:580px;
+    }
+    input, select, textarea{
+      width:100%; padding:10px 12px; border-radius:10px; border:1px solid #dbe6f3; background:#fff;
+      font: inherit; color:inherit;
+    }
+    input:focus, select:focus, textarea:focus, .btn:focus, a:focus{
+      outline:none; box-shadow: 0 0 0 3px var(--ring);
+    }
+    textarea{ min-height:120px; resize: vertical; }
 
-    .kicker{font-size:.9rem;letter-spacing:.2px;color:#475569}
-    @media (prefers-color-scheme: dark){ .kicker{ color:#9aa4b2 } }
+    /* Footer */
+    footer{
+      margin-top: 30px; padding: 22px 0 40px; color:#475569;
+      border-top:1px solid #e5e7eb; background:linear-gradient(180deg,#fbfdff,transparent);
+    }
 
-    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    /* Toegankelijkheid helpers */
+    .sr-only{
+      position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+    }
+
+    /* Responsief */
+    @media (max-width: 860px){
+      .hero-content{ grid-template-columns: 1fr; text-align:center; }
+      .cta{ justify-content:center; }
+    }
   </style>
 </head>
+
 <body>
+  <!-- HEADER -->
   <header>
     <div class="container nav" role="navigation" aria-label="Hoofdnavigatie">
       <div class="brand">
         <span class="logo" aria-hidden="true"></span>
-        <span>Dieren Encyclopedie</span>
+        <span>Vissen Wereld</span>
       </div>
       <nav>
-        <a href="#soorten">Soorten</a>
-        <a href="#weetjes">Weetjes</a>
-        <a href="#galerij">Galerij</a>
-        <a href="#credits">Credits</a>
+        <ul>
+          <li><a href="#soorten">Soorten</a></li>
+          <li><a href="#tips">Tips</a></li>
+          <li><a href="#galerij">Galerij</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
       </nav>
     </div>
   </header>
 
-  <section class="hero">
-    <div class="container">
-      <p class="kicker">Zoek • Filter • Leer</p>
-      <h1 class="section-title" style="margin-top:4px">Ontdek dieren per categorie met habitat, dieet en status</h1>
-      <p class="muted">Gebruik het zoekveld en de filters om snel te vinden wat je zoekt. Klik/tap op een kaart om meer weetjes te lezen.</p>
-      <div class="filters">
-        <div class="card toolbar" style="flex:1 1 360px">
-          <label for="q" class="sr-only">Zoek soort</label>
-          <input id="q" type="search" placeholder="Zoek op naam of Latijnse naam…" style="flex:1" />
-          <label for="categorie">Categorie</label>
-          <select id="categorie">
-            <option value="alle">Alle</option>
-            <option>Zoogdieren</option>
-            <option>Vogels</option>
-            <option>Reptielen</option>
-            <option>Amfibieën</option>
-            <option>Zeeleven</option>
-            <option>Insecten</option>
-          </select>
-          <label for="habitat">Habitat</label>
-          <select id="habitat">
-            <option value="alle">Alle</option>
-            <option>bos</option>
-            <option>savanne</option>
-            <option>woestijn</option>
-            <option>pool</option>
-            <option>bergen</option>
-            <option>grasland</option>
-            <option>oceaan</option>
-            <option>koraalrif</option>
-            <option>moeras</option>
-            <option>regenwoud</option>
-            <option>rivier</option>
-            <option>meer</option>
-          </select>
-          <label for="status">Status</label>
-          <select id="status">
-            <option value="alle">Alle</option>
-            <option>Niet bedreigd</option>
-            <option>Kwetsbaar</option>
-            <option>Bedreigd</option>
-            <option>Ernstig bedreigd</option>
-          </select>
-          <span class="chip" id="count">Gevonden: 0</span>
+  <!-- HERO -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="bubbles"></div>
+    <div class="container hero-content">
+      <div>
+        <h1 id="hero-title">Duik in de wereld van vissen</h1>
+        <p>Leer het verschil tussen zoetwater- en zoutwatervissen, ontdek geschikte soorten voor jouw aquarium, en geniet van een inspirerende fotogalerij.</p>
+        <div class="cta">
+          <a class="btn btn-primary" href="#soorten">Ontdek soorten</a>
+          <a class="btn btn-ghost" href="#tips">Bekijk tips</a>
         </div>
-        <button class="btn btn-primary" id="reset">Reset filters</button>
+      </div>
+      <div aria-hidden="true">
+        <!-- Decoratieve illustratie (SVG golf & vissen) -->
+        <svg viewBox="0 0 520 300" role="img" aria-label="Decoratieve zee-illustratie">
+          <defs>
+            <linearGradient id="g1" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stop-color="#00bcd4"/>
+              <stop offset="100%" stop-color="#0d47a1"/>
+            </linearGradient>
+          </defs>
+          <rect x="0" y="0" width="520" height="300" fill="url(#g1)" opacity="0.18"/>
+          <g fill="#0d47a1" opacity="0.35">
+            <path d="M0,200 C140,160 180,260 320,220 C420,190 470,240 520,220 L520,300 L0,300 Z"/>
+          </g>
+          <g fill="#00bcd4" opacity="0.6">
+            <circle cx="80" cy="120" r="4"/>
+            <circle cx="95" cy="95" r="3"/>
+            <circle cx="110" cy="70" r="2.5"/>
+            <circle cx="430" cy="110" r="3.5"/>
+            <circle cx="450" cy="85" r="2.8"/>
+          </g>
+          <g fill="#1665c0">
+            <path d="M220 140 l18 10 l-18 10 l6 -10 z"/>
+            <circle cx="220" cy="150" r="2" fill="#0a3a84"/>
+          </g>
+          <g fill="#0aaac0">
+            <path d="M360 170 l20 12 l-20 12 l7 -12 z"/>
+            <circle cx="360" cy="182" r="2" fill="#0a3a84"/>
+          </g>
+        </svg>
       </div>
     </div>
   </section>
 
+  <!-- SOORTEN -->
   <section id="soorten" class="container" aria-labelledby="soorten-title">
-    <h2 class="section-title" id="soorten-title">Diersoorten</h2>
-    <div class="grid" id="grid" aria-live="polite" aria-busy="false"></div>
-  </section>
+    <h2 class="section-title" id="soorten-title">Vissensoorten</h2>
+    <p class="muted">Filter op leefgebied om snel geschikte vissen te vinden.</p>
 
-  <section id="weetjes" class="container">
-    <h2 class="section-title">Snelle weetjes</h2>
-    <div class="grid">
-      <article class="card"><h3>Snelste vogel</h3><p>De slechtvalk haalt in duikvlucht > 300 km/u.</p></article>
-      <article class="card"><h3>Grootste dier</h3><p>De blauwe vinvis kan 25–30 m lang worden.</p></article>
-      <article class="card"><h3>Langlevend</h3><p>Groenlandse haai kan > 250 jaar oud worden (schatting).</p></article>
+    <div class="card" style="margin:14px 0 18px; display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+      <label for="filter" class="sr-only">Filter op habitat</label>
+      <select id="filter" aria-label="Filter op zoetwater of zoutwater">
+        <option value="alle">Alle leefgebieden</option>
+        <option value="zoetwater">Zoetwater</option>
+        <option value="zoutwater">Zoutwater</option>
+      </select>
+      <span class="chip" id="count-chip">Gevonden: 0</span>
+    </div>
+
+    <div class="grid" id="species-grid" aria-live="polite" aria-busy="false">
+      <!-- Kaarten worden dynamisch gevuld door JS -->
     </div>
   </section>
 
-  <section id="galerij" class="container">
-    <h2 class="section-title">Sfeerbeelden</h2>
+  <!-- TIPS -->
+  <section id="tips" class="container" aria-labelledby="tips-title">
+    <h2 class="section-title" id="tips-title">Handige tips</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>Waterkwaliteit</h3>
+        <ul class="tips">
+          <li>Test regelmatig pH, NH₃/NH₄⁺, NO₂⁻ en NO₃⁻.</li>
+          <li>Voer wekelijks 20–30% waterverversing uit.</li>
+          <li>Overvoer niet; beter kleine porties 1–2× per dag.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Aquarium inrichten</h3>
+        <ul class="tips">
+          <li>Kies een filter passend bij het volume (≥ 4× inhoud/uur).</li>
+          <li>Voor schuwe soorten: planten, schuilplaatsen en drijfhout.</li>
+          <li>Houd rekening met temperatuur en hardheid per soort.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Compatibiliteit</h3>
+        <ul class="tips">
+          <li>Combineer vreedzame vissen met vergelijkbare grootte.</li>
+          <li>Check territoriaal gedrag (bijv. cichliden kunnen fel zijn).</li>
+          <li>Quarantaine nieuwe vissen om ziekten te voorkomen.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALERIJ -->
+  <section id="galerij" class="container" aria-labelledby="galerij-title">
+    <h2 class="section-title" id="galerij-title">Galerij</h2>
     <div class="gallery">
       <figure>
-        <img loading="lazy" src="https://images.unsplash.com/photo-1493000668394-7f05fa34c476?q=80&w=1600&auto=format&fit=crop" alt="Giraffen op de savanne" />
-        <figcaption>Giraffen op de savanne.</figcaption>
+        <img src="https://images.unsplash.com/photo-1518837695005-2083093ee35b?q=80&w=1200&auto=format&fit=crop" alt="Koraalrif met tropische vissen"/>
+        <figcaption>Koraalrif – kleurrijke rifvissen in hun habitat.</figcaption>
       </figure>
       <figure>
-        <img loading="lazy" src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1600&auto=format&fit=crop" alt="Kleurrijk koraalrif" />
-        <figcaption>Kleurrijk koraalrif.</figcaption>
+        <img src="https://images.unsplash.com/photo-1524704796725-9fc3044a58e3?q=80&w=1200&auto=format&fit=crop" alt="Goudvis in helder water"/>
+        <figcaption>Goudvis – klassieke zoetwaterbewoner.</figcaption>
       </figure>
       <figure>
-        <img loading="lazy" src="https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1600&auto=format&fit=crop" alt="Uil in bosrijke omgeving" />
-        <figcaption>Uil in een bosrijke omgeving.</figcaption>
+        <img src="https://images.unsplash.com/photo-1587854692152-0d89f5dcbf38?q=80&w=1200&auto=format&fit=crop" alt="School sardines"/>
+        <figcaption>Sardines – indrukwekkende scholen in zee.</figcaption>
       </figure>
     </div>
+    <p class="muted">Vervang de afbeeldingen met je eigen foto’s door de URL’s aan te passen.</p>
   </section>
 
-  <section id="credits" class="container">
-    <h2 class="section-title">Credits</h2>
-    <p class="muted">Foto’s afkomstig van Unsplash. Je mag ze vrij gebruiken onder de Unsplash‑licentie; vermelding van de fotograaf is niet verplicht maar wel netjes.</p>
+  <!-- CONTACT -->
+  <section id="contact" class="container" aria-labelledby="contact-title">
+    <h2 class="section-title" id="contact-title">Contact</h2>
+    <form id="contact-form" novalidate>
+      <div>
+        <label for="naam">Naam</label>
+        <input id="naam" name="naam" type="text" required placeholder="Je naam" />
+      </div>
+      <div>
+        <label for="email">E‑mail</label>
+        <input id="email" name="email" type="email" required placeholder="naam@voorbeeld.nl" />
+      </div>
+      <div>
+        <label for="onderwerp">Onderwerp</label>
+        <input id="onderwerp" name="onderwerp" type="text" placeholder="Waarover wil je contact?" />
+      </div>
+      <div>
+        <label for="bericht">Bericht</label>
+        <textarea id="bericht" name="bericht" placeholder="Schrijf hier je vraag of opmerking…"></textarea>
+      </div>
+      <button class="btn btn-primary" type="submit">Versturen</button>
+      <p id="form-status" role="status" class="muted" aria-live="polite"></p>
+    </form>
   </section>
 
+  <!-- FOOTER -->
   <footer>
     <div class="container">
-      <small>&copy; <span id="year"></span> Dieren Encyclopedie — gemaakt met ❤️ voor dierenliefhebbers.</small>
+      <small>&copy; <span id="year"></span> Vissen Wereld. Gemaakt met ♥ voor waterliefhebbers.</small>
     </div>
   </footer>
 
+  <!-- DATA + SCRIPT -->
   <script>
-    // ====== Data ======
-    // velden: naam, latijnseNaam, categorie, habitat, dieet, status, grootte, gewicht, levensduur, verspreiding, foto, weetjes[]
-    const ANIMALS = [
-      // Zoogdieren
-      { naam: "Afrikaanse olifant", latijnseNaam: "Loxodonta africana", categorie: "Zoogdieren", habitat: "savanne", dieet: "herbivoor", status: "Kwetsbaar", grootte: "2,5–4 m schouderhoogte", gewicht: "2.700–6.300 kg", levensduur: "60–70 jaar", verspreiding: "Afrikaanse savannes", foto: "https://images.unsplash.com/photo-1508672019048-805c876b67e2?q=80&w=1200&auto=format&fit=crop", weetjes: ["Communiceert infrasonisch","Matriarchale kuddes"] },
-      { naam: "Leeuw", latijnseNaam: "Panthera leo", categorie: "Zoogdieren", habitat: "savanne", dieet: "carnivoor", status: "Kwetsbaar", grootte: "1,2 m schouderhoogte", gewicht: "120–190 kg", levensduur: "10–15 jaar (wild)", verspreiding: "Sub-Sahara Afrika", foto: "https://images.unsplash.com/photo-1546182990-dffeafbe841d?q=80&w=1200&auto=format&fit=crop", weetjes: ["Brult tot 8 km ver","Leeft in troepen"] },
-      { naam: "Giraffe", latijnseNaam: "Giraffa camelopardalis", categorie: "Zoogdieren", habitat: "savanne", dieet: "herbivoor", status: "Kwetsbaar", grootte: "4,5–6 m", gewicht: "800–1.200 kg", levensduur: "20–25 jaar", verspreiding: "Oost- en Zuidelijk Afrika", foto: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=1200&auto=format&fit=crop", weetjes: ["Blauwe tong","Slaapt kort"] },
-      { naam: "IJsbeer", latijnseNaam: "Ursus maritimus", categorie: "Zoogdieren", habitat: "pool", dieet: "carnivoor", status: "Kwetsbaar", grootte: "2–3 m", gewicht: "300–700 kg", levensduur: "20–25 jaar", verspreiding: "Arctische regio's", foto: "https://images.unsplash.com/photo-1544829099-506e7c4b5e6d?q=80&w=1200&auto=format&fit=crop", weetjes: ["Holle haren isoleren","Sterke zwemmers"] },
-      { naam: "Koala", latijnseNaam: "Phascolarctos cinereus", categorie: "Zoogdieren", habitat: "bos", dieet: "herbivoor (eucalyptus)", status: "Kwetsbaar", grootte: "60–85 cm", gewicht: "4–15 kg", levensduur: "10–15 jaar", verspreiding: "Oost-Australië", foto: "https://images.unsplash.com/photo-1552415181-4b5a1a02cfb0?q=80&w=1200&auto=format&fit=crop", weetjes: ["Slaapt 18–20 uur","Gespecialiseerde spijsvertering"] },
-      { naam: "Kangoeroe", latijnseNaam: "Macropus spp.", categorie: "Zoogdieren", habitat: "grasland", dieet: "herbivoor", status: "Niet bedreigd", grootte: "1–2 m", gewicht: "18–90 kg", levensduur: "6–20 jaar", verspreiding: "Australië", foto: "https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?q=80&w=1200&auto=format&fit=crop", weetjes: ["Sterke achterpoten","Jong in buidel"] },
-      { naam: "Reuzenpanda", latijnseNaam: "Ailuropoda melanoleuca", categorie: "Zoogdieren", habitat: "bos", dieet: "herbivoor (bamboe)", status: "Kwetsbaar", grootte: "1,2–1,9 m", gewicht: "70–120 kg", levensduur: "20–30 jaar", verspreiding: "China", foto: "https://images.unsplash.com/photo-1546182990-2ec47a77d82d?q=80&w=1200&auto=format&fit=crop", weetjes: ["Valse duim","Eet uren per dag"] },
-      { naam: "Nijlpaard", latijnseNaam: "Hippopotamus amphibius", categorie: "Zoogdieren", habitat: "rivier", dieet: "herbivoor", status: "Kwetsbaar", grootte: "3,3–5 m", gewicht: "1.300–1.800 kg", levensduur: "40–50 jaar", verspreiding: "Afrikaanse rivieren", foto: "https://images.unsplash.com/photo-1526318472351-c75fcf070305?q=80&w=1200&auto=format&fit=crop", weetjes: ["Territoriaal in water","Snel op land"] },
-      { naam: "Zebra", latijnseNaam: "Equus quagga", categorie: "Zoogdieren", habitat: "savanne", dieet: "herbivoor", status: "Niet bedreigd", grootte: "1,2–1,5 m schouderhoogte", gewicht: "200–450 kg", levensduur: "20–25 jaar", verspreiding: "Afrika", foto: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200&auto=format&fit=crop", weetjes: ["Strepen camoufleren","Leeft in harems"] },
-      { naam: "Walrus", latijnseNaam: "Odobenus rosmarus", categorie: "Zoogdieren", habitat: "pool", dieet: "carnivoor (schelpdieren)", status: "Kwetsbaar", grootte: "2,2–3,6 m", gewicht: "800–1.700 kg", levensduur: "20–30 jaar", verspreiding: "Arctische kusten", foto: "https://images.unsplash.com/photo-1535930749574-1399327ce78f?q=80&w=1200&auto=format&fit=crop", weetjes: ["Lange slagtanden","Groepen op ijs"] },
-
-      // Vogels
-      { naam: "Slechtvalk", latijnseNaam: "Falco peregrinus", categorie: "Vogels", habitat: "bergen", dieet: "carnivoor", status: "Niet bedreigd", grootte: "34–58 cm", gewicht: "0,3–1,3 kg", levensduur: "13–20 jaar", verspreiding: "Wereldwijd", foto: "https://images.unsplash.com/photo-1494475673543-6a6a27143b22?q=80&w=1200&auto=format&fit=crop", weetjes: ["Duiksnelheid > 300 km/u","Uitstekend zicht"] },
-      { naam: "Keizerspinguïn", latijnseNaam: "Aptenodytes forsteri", categorie: "Vogels", habitat: "pool", dieet: "carnivoor (vis)", status: "Kwetsbaar", grootte: "110–120 cm", gewicht: "22–45 kg", levensduur: "15–20 jaar", verspreiding: "Antarctica", foto: "https://images.unsplash.com/photo-1544551763-77efcba91fef?q=80&w=1200&auto=format&fit=crop", weetjes: ["Mannetje broedt op voeten","Groepsvorming tegen kou"] },
-      { naam: "Uil", latijnseNaam: "Strigiformes", categorie: "Vogels", habitat: "bos", dieet: "carnivoor", status: "Niet bedreigd", grootte: "20–70 cm", gewicht: "0,2–3 kg", levensduur: "4–15 jaar", verspreiding: "Wereldwijd", foto: "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1200&auto=format&fit=crop", weetjes: ["Geruisloze vlucht","Groot draaibereik van kop"] },
-      { naam: "Arend", latijnseNaam: "Aquila spp.", categorie: "Vogels", habitat: "bergen", dieet: "carnivoor", status: "Niet bedreigd", grootte: "Spanwijdte 1,8–2,4 m", gewicht: "2–7 kg", levensduur: "14–30 jaar", verspreiding: "Eurazië, Amerika", foto: "https://images.unsplash.com/photo-1494475673543-6a6a27143b22?q=80&w=1200&auto=format&fit=crop", weetjes: ["Scherp zicht","Grote nesten"] },
-      { naam: "Papegaai (Ara)", latijnseNaam: "Ara macao", categorie: "Vogels", habitat: "regenwoud", dieet: "omnivoor", status: "Kwetsbaar", grootte: "70–95 cm", gewicht: "1–1,5 kg", levensduur: "40–60 jaar", verspreiding: "Zuid- en Centraal-Amerika", foto: "https://images.unsplash.com/photo-1500534314209-a26db0f5d50d?q=80&w=1200&auto=format&fit=crop", weetjes: ["Imiteert klanken","Sterke sociale banden"] },
-      { naam: "Flamingo", latijnseNaam: "Phoenicopterus roseus", categorie: "Vogels", habitat: "moeras", dieet: "filteraar (algen/krill)", status: "Niet bedreigd", grootte: "1–1,5 m", gewicht: "2–4 kg", levensduur: "20–30 jaar", verspreiding: "Afrika, Eurazië, Amerika", foto: "https://images.unsplash.com/photo-1500315331616-db1bd04417a7?q=80&w=1200&auto=format&fit=crop", weetjes: ["Roze door carotenoïden","Rust op één been"] },
-
-      // Reptielen
-      { naam: "Groene zeeschildpad", latijnseNaam: "Chelonia mydas", categorie: "Reptielen", habitat: "koraalrif", dieet: "herbivoor", status: "Bedreigd", grootte: "80–120 cm schild", gewicht: "70–200 kg", levensduur: "60–80 jaar", verspreiding: "Tropische zeeën", foto: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200&auto=format&fit=crop", weetjes: ["Langdurige migraties","Terug naar geboortestrand"] },
-      { naam: "Komodovaraan", latijnseNaam: "Varanus komodoensis", categorie: "Reptielen", habitat: "bos", dieet: "carnivoor", status: "Kwetsbaar", grootte: "2–3 m", gewicht: "70–90 kg", levensduur: "20–30 jaar", verspreiding: "Indonesië (Komodo)", foto: "https://images.unsplash.com/photo-1585647348360-c5e0d8f9bea0?q=80&w=1200&auto=format&fit=crop", weetjes: ["Krachtige beet","Giftige speekselcomponenten"] },
-      { naam: "Nijlkrokodil", latijnseNaam: "Crocodylus niloticus", categorie: "Reptielen", habitat: "rivier", dieet: "carnivoor", status: "Niet bedreigd", grootte: "3–5 m", gewicht: "225–750 kg", levensduur: "50–70 jaar", verspreiding: "Sub-Sahara Afrika", foto: "https://images.unsplash.com/photo-1520975922284-8baf0f1f7a3f?q=80&w=1200&auto=format&fit=crop", weetjes: ["Sterke kaakdruk","Ambush‑jager"] },
-      { naam: "Panterkameleon", latijnseNaam: "Furcifer pardalis", categorie: "Reptielen", habitat: "regenwoud", dieet: "insectivoor", status: "Niet bedreigd", grootte: "35–55 cm", gewicht: "120–180 g", levensduur: "3–7 jaar", verspreiding: "Madagaskar", foto: "https://images.unsplash.com/photo-1514511542834-43cd9f6b3bd3?q=80&w=1200&auto=format&fit=crop", weetjes: ["Kleurverandering","Projecteert tong snel"] },
-      { naam: "Anaconda (groen)", latijnseNaam: "Eunectes murinus", categorie: "Reptielen", habitat: "moeras", dieet: "carnivoor", status: "Niet bedreigd", grootte: "3–6 m", gewicht: "30–150 kg", levensduur: "10–30 jaar", verspreiding: "Amazonegebied", foto: "https://images.unsplash.com/photo-1590590424585-4c7087bdc1e1?q=80&w=1200&auto=format&fit=crop", weetjes: ["Zwaarste slang","Amfibisch"] },
-
-      // Amfibieën
-      { naam: "Roodoogmakikikker", latijnseNaam: "Agalychnis callidryas", categorie: "Amfibieën", habitat: "regenwoud", dieet: "insectivoor", status: "Niet bedreigd", grootte: "5–7 cm", gewicht: "6–15 g", levensduur: "5–8 jaar", verspreiding: "Centraal-Amerika", foto: "https://images.unsplash.com/photo-1501706362039-c06b2d715385?q=80&w=1200&auto=format&fit=crop", weetjes: ["Nachtactief","Zuignappen"] },
-      { naam: "Axolotl", latijnseNaam: "Ambystoma mexicanum", categorie: "Amfibieën", habitat: "meer", dieet: "carnivoor", status: "Ernstig bedreigd", grootte: "15–45 cm", gewicht: "60–200 g", levensduur: "10–15 jaar", verspreiding: "Mexico (Xochimilco)", foto: "https://images.unsplash.com/photo-1585110396000-5bfa9a316bed?q=80&w=1200&auto=format&fit=crop", weetjes: ["Behoudt larvale kenmerken","Regeneratievermogen"] },
-      { naam: "Vuurbuiksalamander", latijnseNaam: "Cynops orientalis", categorie: "Amfibieën", habitat: "moeras", dieet: "insectivoor", status: "Niet bedreigd", grootte: "7–10 cm", gewicht: "10–20 g", levensduur: "10–20 jaar", verspreiding: "China", foto: "https://images.unsplash.com/photo-1619109364068-9d9cf0d8b5a2?q=80&w=1200&auto=format&fit=crop", weetjes: ["Felle buik als waarschuwing","Gifklieren"] },
-      { naam: "Pijlgifkikker", latijnseNaam: "Dendrobatidae", categorie: "Amfibieën", habitat: "regenwoud", dieet: "insectivoor", status: "Niet bedreigd", grootte: "1,5–6 cm", gewicht: "1–8 g", levensduur: "3–15 jaar", verspreiding: "Zuid- en Centraal-Amerika", foto: "https://images.unsplash.com/photo-1541769740-23f3c0b88c3a?q=80&w=1200&auto=format&fit=crop", weetjes: ["Helder kleurenpatroon","Giftige huid"] },
-
-      // Zeeleven
-      { naam: "Blauwe vinvis", latijnseNaam: "Balaenoptera musculus", categorie: "Zeeleven", habitat: "oceaan", dieet: "filteraar (krill)", status: "Bedreigd", grootte: "25–30 m", gewicht: "tot 150 ton", levensduur: "80–90 jaar", verspreiding: "Wereldzeeën", foto: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200&auto=format&fit=crop", weetjes: ["Hart zo groot als auto","Luidste dier"] },
-      { naam: "Tuimelaar (dolfijn)", latijnseNaam: "Tursiops truncatus", categorie: "Zeeleven", habitat: "oceaan", dieet: "carnivoor (vis)", status: "Niet bedreigd", grootte: "2–4 m", gewicht: "150–300 kg", levensduur: "20–40 jaar", verspreiding: "Wereldwijd (warme zeeën)", foto: "https://images.unsplash.com/photo-1500973499642-6b06b3d9b3f5?q=80&w=1200&auto=format&fit=crop", weetjes: ["Echolocatie","Sociaal gedrag"] },
-      { naam: "Orka", latijnseNaam: "Orcinus orca", categorie: "Zeeleven", habitat: "oceaan", dieet: "carnivoor", status: "Niet bedreigd", grootte: "5–9 m", gewicht: "3.000–10.000 kg", levensduur: "30–90 jaar", verspreiding: "Pool tot tropen", foto: "https://images.unsplash.com/photo-1510172951991-856a65406399?q=80&w=1200&auto=format&fit=crop", weetjes: ["Matriarchale pods","Culturele jachttechnieken"] },
-      { naam: "Reuzenmanta", latijnseNaam: "Mobula birostris", categorie: "Zeeleven", habitat: "koraalrif", dieet: "filteraar (plankton)", status: "Kwetsbaar", grootte: "Spanwijdte 4–7 m", gewicht: "1.000–1.600 kg", levensduur: "20–40 jaar", verspreiding: "Tropische oceanen", foto: "https://images.unsplash.com/photo-1546500840-ae38253aba9b?q=80&w=1200&auto=format&fit=crop", weetjes: ["Grote ‘vleugels’","Intelligent gedrag"] },
-      { naam: "Witte haai", latijnseNaam: "Carcharodon carcharias", categorie: "Zeeleven", habitat: "oceaan", dieet: "carnivoor", status: "Kwetsbaar", grootte: "3,5–6 m", gewicht: "680–1.100 kg", levensduur: "30–70 jaar", verspreiding: "Gematigde zeeën", foto: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1200&auto=format&fit=crop", weetjes: ["Elektroreceptie","Top‑predator"] },
-      { naam: "Zeepaardje", latijnseNaam: "Hippocampus spp.", categorie: "Zeeleven", habitat: "koraalrif", dieet: "carnivoor (klein)", status: "Kwetsbaar", grootte: "2–35 cm", gewicht: "enkele grammen", levensduur: "1–5 jaar", verspreiding: "Tropisch/temperaat", foto: "https://images.unsplash.com/photo-1524704796725-9fc3044a58e3?q=80&w=1200&auto=format&fit=crop", weetjes: ["Mannetje draagt jongen","Camouflage"] },
-
-      // Insecten
-      { naam: "Monarchvlinder", latijnseNaam: "Danaus plexippus", categorie: "Insecten", habitat: "grasland", dieet: "nectar (volwassen)", status: "Kwetsbaar", grootte: "8–10 cm spanwijdte", gewicht: "~0,5 g", levensduur: "6–8 weken (zomer)", verspreiding: "Noord- en Midden-Amerika", foto: "https://images.unsplash.com/photo-1504196606672-aef5c9cefc92?q=80&w=1200&auto=format&fit=crop", weetjes: ["Massamigratie","Gastplant zijdeplant"] },
-      { naam: "Honingbij", latijnseNaam: "Apis mellifera", categorie: "Insecten", habitat: "bos", dieet: "nectar/pollen", status: "Niet bedreigd", grootte: "12–15 mm", gewicht: "~0,1 g", levensduur: "6 weken–5 jaar (koningin)", verspreiding: "Wereldwijd", foto: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=1200&auto=format&fit=crop", weetjes: ["Dans‑communicatie","Belangrijk voor bestuiving"] },
-      { naam: "Herculeskever", latijnseNaam: "Dynastes hercules", categorie: "Insecten", habitat: "regenwoud", dieet: "sap/rottend fruit", status: "Niet bedreigd", grootte: "5–17 cm", gewicht: "tot 100 g", levensduur: "3–6 maanden (volwassen)", verspreiding: "Zuid- en Centraal-Amerika", foto: "https://images.unsplash.com/photo-1614364803562-184044c10a26?q=80&w=1200&auto=format&fit=crop", weetjes: ["Zeer sterk","Lange hoorn bij mannetje"] },
-      { naam: "Bidsprinkhaan", latijnseNaam: "Mantodea", categorie: "Insecten", habitat: "grasland", dieet: "carnivoor (insecten)", status: "Niet bedreigd", grootte: "1–15 cm", gewicht: "1–35 g", levensduur: "6–12 maanden", verspreiding: "Wereldwijd (warm)", foto: "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?q=80&w=1200&auto=format&fit=crop", weetjes: ["Voorpoten als grijphaken","Camouflage"] }
+    // ======= Data voor vissensoorten =======
+    const SPECIES = [
+      {
+        naam: "Guppy",
+        habitat: "zoetwater",
+        minLiter: 60,
+        temp: "22–26°C",
+        beschrijving: "Kleurrijke, levendige scholenvis; ideaal voor beginners.",
+        foto: "https://images.unsplash.com/photo-1544551763-7ef0383f0f49?q=80&w=1200&auto=format&fit=crop",
+      },
+      {
+        naam: "Neontetra",
+        habitat: "zoetwater",
+        minLiter: 70,
+        temp: "20–26°C",
+        beschrijving: "Bekend om de neonblauwe streep; voelt zich goed in groepen.",
+        foto: "https://images.unsplash.com/photo-1616690727582-6b0fd7a5f364?q=80&w=1200&auto=format&fit=crop",
+      },
+      {
+        naam: "Clownvis",
+        habitat: "zoutwater",
+        minLiter: 100,
+        temp: "24–27°C",
+        beschrijving: "Rifvis die vaak in anemonen leeft; populair in zeeaquaria.",
+        foto: "https://images.unsplash.com/photo-1560275619-4662e36fa65d?q=80&w=1200&auto=format&fit=crop",
+      },
+      {
+        naam: "Koraalduivel (Lionfish)",
+        habitat: "zoutwater",
+        minLiter: 300,
+        temp: "24–26°C",
+        beschrijving: "Prachtig maar giftig; niet voor beginners en solitair.",
+        foto: "https://images.unsplash.com/photo-1579541491966-b6b0831f0826?q=80&w=1200&auto=format&fit=crop",
+      },
+      {
+        naam: "Goudvis",
+        habitat: "zoetwater",
+        minLiter: 120,
+        temp: "18–22°C",
+        beschrijving: "Hebben veel ruimte en filtratie nodig; geen kom!",
+        foto: "https://images.unsplash.com/photo-1549366021-9f761d450615?q=80&w=1200&auto=format&fit=crop",
+      },
+      {
+        naam: "Keizersvis (Angelfish – zee)",
+        habitat: "zoutwater",
+        minLiter: 250,
+        temp: "24–27°C",
+        beschrijving: "Kleurrijke rifbewoner; vraagt stabiele waterwaarden.",
+        foto: "https://images.unsplash.com/photo-1508711042764-9c5b47217b5a?q=80&w=1200&auto=format&fit=crop",
+      },
     ];
 
-    // ====== UI logica ======
-    const grid = document.getElementById('grid');
-    const q = document.getElementById('q');
-    const categorieSel = document.getElementById('categorie');
-    const habitatSel = document.getElementById('habitat');
-    const statusSel = document.getElementById('status');
-    const countEl = document.getElementById('count');
-    const resetBtn = document.getElementById('reset');
+    // ======= Elementen =======
+    const grid = document.getElementById('species-grid');
+    const filter = document.getElementById('filter');
+    const countChip = document.getElementById('count-chip');
     const yearSpan = document.getElementById('year');
 
-    function card(a){
-      const el = document.createElement('article');
-      el.className = 'card animal';
-      const alt = `${a.naam} in habitat: ${a.habitat}`;
-      el.innerHTML = `
-        <img loading="lazy" src="${a.foto}" alt="${alt}" />
-        <h3>${a.naam} <span class="latin">(${a.latijnseNaam})</span></h3>
-        <div class="chips">
-          <span class="chip" title="Categorie">${a.categorie}</span>
-          <span class="chip" title="Habitat">${a.habitat}</span>
-          <span class="chip" title="Dieet">${a.dieet}</span>
-          <span class="chip" title="Status">${a.status}</span>
-        </div>
-        <p class="muted">Grootte: ${a.grootte} • Gewicht: ${a.gewicht} • Levensduur: ${a.levensduur}</p>
-        <p class="muted">Verspreiding: ${a.verspreiding}</p>
-        <details>
-          <summary>Weetjes</summary>
-          <ul class="facts">${a.weetjes.map(w=>`<li>${w}</li>`).join('')}</ul>
-        </details>
+    // ======= Helpers =======
+    function createCard(item){
+      const card = document.createElement('article');
+      card.className = 'card';
+      card.setAttribute('data-habitat', item.habitat);
+
+      card.innerHTML = `
+        <img src="${item.foto}" alt="${item.naam}" loading="lazy" />
+        <h3>${item.naam}</h3>
+        <p class="muted" style="margin-top:-8px">
+          <span class="chip" title="Leefgebied">${item.habitat}</span>
+          <span class="chip" title="Minimaal aquarium">${item.minLiter} L</span>
+          <span class="chip" title="Temperatuur">${item.temp}</span>
+        </p>
+        <p>${item.beschrijving}</p>
       `;
-      return el;
+      return card;
     }
 
-    function apply(){
+    function render(list){
       grid.setAttribute('aria-busy','true');
-      const text = q.value.trim().toLowerCase();
-      const cat = categorieSel.value;
-      const hab = habitatSel.value;
-      const st = statusSel.value;
-      const list = ANIMALS.filter(a=>{
-        const t = !text || a.naam.toLowerCase().includes(text) || a.latijnseNaam.toLowerCase().includes(text);
-        const c = (cat==='alle') || a.categorie===cat;
-        const h = (hab==='alle') || a.habitat===hab;
-        const s = (st==='alle') || a.status===st;
-        return t && c && h && s;
-      });
-      grid.innerHTML='';
-      list.forEach(a=>grid.appendChild(card(a)));
-      countEl.textContent = 'Gevonden: ' + list.length;
+      grid.innerHTML = '';
+      list.forEach(item => grid.appendChild(createCard(item)));
+      countChip.textContent = 'Gevonden: ' + list.length;
       grid.setAttribute('aria-busy','false');
     }
 
-    q.addEventListener('input', apply);
-    categorieSel.addEventListener('change', apply);
-    habitatSel.addEventListener('change', apply);
-    statusSel.addEventListener('change', apply);
-    resetBtn.addEventListener('click', ()=>{ q.value=''; categorieSel.value='alle'; habitatSel.value='alle'; statusSel.value='alle'; apply(); });
+    function applyFilter(){
+      const value = filter.value;
+      const data = value === 'alle'
+        ? SPECIES
+        : SPECIES.filter(s => s.habitat === value);
+      render(data);
+    }
 
-    // init
-    apply();
+    // ======= Contactformulier (demo-validatie) =======
+    const form = document.getElementById('contact-form');
+    const status = document.getElementById('form-status');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      const naam = fd.get('naam')?.trim();
+      const email = fd.get('email')?.trim();
+      if(!naam || !email){
+        status.textContent = 'Vul minimaal naam en e‑mail in.';
+        status.style.color = '#b91c1c';
+        return;
+      }
+      // Hier kun je een echte endpoint aanroepen (fetch) als je later wilt.
+      status.textContent = `Bedankt ${naam}! We nemen snel contact op via ${email}.`;
+      status.style.color = '#0f766e';
+      form.reset();
+    });
+
+    // ======= Init =======
+    filter.addEventListener('change', applyFilter);
+    render(SPECIES);
     yearSpan.textContent = new Date().getFullYear();
   </script>
 </body>
-</html>
+</html>'''
+
+# Write the provided code into index.html (replacing previous)
+with open('index.html', 'w', encoding='utf-8') as f:
+    f.write(raw)
+
+import os, hashlib
+sha = hashlib.sha256(raw.encode('utf-8')).hexdigest()
+print({'saved':'index.html','size':len(raw.encode("utf-8")),'sha256':sha,'preview':raw[:180]})
